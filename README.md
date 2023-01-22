@@ -4,7 +4,7 @@ The application is a comics catalog where users can see a list of comics by Marv
 
 ### Running the app :star:
 
-The app is deployed on https://user-panel-omega.vercel.app/
+The app is deployed on https://marvel-explorer-seven.vercel.app/
 If you want to run it locally, clone the repo and run the following:
 
 > My node version running this app v16.4.0
