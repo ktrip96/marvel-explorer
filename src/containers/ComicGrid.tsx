@@ -1,51 +1,39 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useReducer } from 'react'
 import Comic from '../components/Comic'
+import { comicGridReducer, initialState } from '../reducers/comicGridReducer'
 import { ComicType } from '../types/comic'
-
-type Props = {}
+import { getComicAttributes } from '../utilities/helper'
+import { apiComicType } from '../types/comic'
 
 // TODO
-// Replace State logic with useReducer logic
-// Calculate the hash through .env\
-// infinite scrolling
+// Explain why Intersection Works this way
+// Custom Hook
 
-const ComicGrid = (props: Props) => {
-	const [offset, setOffset] = useState(0)
-	const [comicData, setComicData] = useState<Array<ComicType>>([] as Array<ComicType>)
+const ComicGrid = () => {
+	const [state, dispatch] = useReducer(comicGridReducer, initialState)
+	const { offset, comicData } = state
 
-	// Observer
-	const observer = useRef<any>(null) // ref to store observer
+	const observer = useRef<any>(null)
 
 	const lastElementRef = useCallback((element: HTMLDivElement) => {
-		//element is the react element being referenced
-
-		// disconnect observer set on previous last element
 		if (observer.current) observer.current.disconnect()
-
-		// set new observer
 		observer.current = new IntersectionObserver((entries) => {
-			// increase page number when element enters (is intersecting with) viewport.
-			// This triggers the pagination hook to fetch more items in the new page
 			if (entries[0].isIntersecting) {
-				console.log('Callback fired')
-				setOffset((prev) => prev + 20)
+				dispatch({ type: 'INCREMENT_OFFSET' })
 			}
 		})
-		// observe/monitor last element
 		if (element) observer.current.observe(element)
 	}, [])
 
 	const fetchComicData = async (url: string) => {
-		const emptyComic: ComicType = {
-			isSkeleton: true,
-		}
-		setComicData((prev) => [...prev, ...Array(20).fill(emptyComic)])
-
+		dispatch({ type: 'FETCH_START' })
 		fetch(url)
 			.then((response) => response.json())
 			.then((data) => {
-				const comicAPIdata: Array<ComicType> = data.data.results.map((item: any) => getComicAttributes(item))
-				setComicData((prev) => prev.filter((comic) => comic.isSkeleton === false).concat(comicAPIdata))
+				const comicAPIdata: Array<ComicType> = data.data.results.map((item: apiComicType) =>
+					getComicAttributes(item)
+				)
+				dispatch({ type: 'FETCH_SUCCESS', payload: comicAPIdata })
 			})
 	}
 
@@ -61,20 +49,8 @@ const ComicGrid = (props: Props) => {
 					<Comic data={i} />
 				</div>
 			))}
-
-			<h1>offset:{offset}</h1>
 		</div>
 	)
-}
-
-function getComicAttributes(obj: any): ComicType {
-	// destructs and returns { item , title, issueNumber, price, image}
-	const { title, issueNumber, thumbnail, prices } = obj
-	const price = prices[0].price
-	const image = thumbnail.path + '.' + thumbnail.extension
-	const isSkeleton = false
-
-	return { title, issueNumber, image, price, isSkeleton }
 }
 
 export default ComicGrid

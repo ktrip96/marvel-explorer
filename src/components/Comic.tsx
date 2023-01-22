@@ -1,26 +1,45 @@
-import React from 'react'
+import { memo } from 'react'
 import { ComicType } from '../types/comic'
-
-// TODO:
-// handle Missing Data
-// Handle isSkeleton
-// Handle unsplash lazy loading image
-// Make image component with blur
-// On hover Image zoom instead of container zoom
 
 const Comic = ({ data }: { data: ComicType }) => {
 	const { image, issueNumber, price, title, isSkeleton } = data
+
 	return (
 		<div
-			className={`w-64 h-64 m-auto rounded-md shadow-sm border border-gray-300 ${
-				!isSkeleton && 'hover:scale-105 hover:shadow-lg cursor-pointer transition'
+			className={`w-64 h-64 m-auto rounded-md shadow-sm border border-gray-300 group ${
+				!isSkeleton && 'hover:shadow-lg cursor-pointer transition'
 			}  overflow-hidden`}
 		>
-			<div className={`h-44 bg-gray-900 flex justify-center items-center`}>
+			<div className={`h-44 bg-gray-900 relative overflow-hidden`}>
 				{isSkeleton ? (
-					<div className='rounded-full w-20 h-20 bg-gradient-to-r from-[#FF416C] to-[#FF4B2B] animate-pulse' />
+					<div className='rounded-full w-20 h-20 absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]  bg-gradient-to-r from-[#FF416C] to-[#FF4B2B] animate-pulse' />
 				) : (
-					<img src={image} className='h-44  object-contain' alt={title} />
+					<>
+						<div
+							style={{
+								backgroundImage: 'url(' + image + ')',
+								backgroundPosition: 'center',
+								backgroundSize: 'cover',
+								backgroundRepeat: 'no-repeat',
+								filter: 'blur(8px)',
+							}}
+							className='w-64 h-44 absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]'
+						/>
+						<img
+							src={image}
+							loading='lazy'
+							className='h-44 absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] group-hover:scale-150 transition duration-300 z-10'
+							alt={title}
+						/>
+					</>
+
+					// // Lazy load Images
+					// <img
+					// 	src={image}
+					// 	loading='lazy'
+					// 	className='h-44 m-auto group-hover:scale-150 transition duration-300 z-10'
+					// 	alt={title}
+					// />
 				)}
 			</div>
 			<div className='h-20 relative py-1 px-3 bg-white'>
@@ -46,4 +65,4 @@ const Comic = ({ data }: { data: ComicType }) => {
 	)
 }
 
-export default Comic
+export default memo(Comic)
