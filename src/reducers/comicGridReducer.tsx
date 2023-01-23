@@ -5,7 +5,7 @@ type StateType = {
 	comicData: Array<ComicType>
 }
 
-type ActionType = {
+export type ActionType = {
 	type: 'INCREMENT_OFFSET' | 'FETCH_START' | 'FETCH_SUCCESS'
 	payload?: Array<ComicType>
 }
