@@ -20,7 +20,7 @@ export function useFetchData() {
 	}
 
 	useEffect(() => {
-		const url = `http://gateway.marvel.com/v1/public/comics?apikey=0d8a28cf18b921d3ac9b589e6a7186de&hash=d312aa129c1be1a7b70627050863f692&ts=1&offset=${offset}`
+		const url = `https://gateway.marvel.com/v1/public/comics?apikey=0d8a28cf18b921d3ac9b589e6a7186de&hash=d312aa129c1be1a7b70627050863f692&ts=1&offset=${offset}`
 		fetchComicData(url)
 	}, [offset])
 
