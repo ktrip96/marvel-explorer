@@ -3,7 +3,7 @@ import { comicGridReducer, initialState } from '../reducers/comicGridReducer'
 import { apiComicType, ComicType } from '../types/comic'
 import { getComicAttributes } from '../utilities/helper'
 
-export function useFetchData() {
+export function useFetchComicData() {
 	const [state, dispatch] = useReducer(comicGridReducer, initialState)
 	const { offset, comicData } = state
 
